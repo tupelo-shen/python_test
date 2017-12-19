@@ -24,7 +24,9 @@ class Retriever(object):
     def filename(self, url, deffile='index.html'):
         parsedurl = urlparse(url, 'https:', 0) ## parse path
         path = parsedurl[1] + parsedurl[2]
+        print path
         ext = splitext(path)
+        print ext
 
         if ext[1] == '': # no file, use default
             if path[-1] == '/':
