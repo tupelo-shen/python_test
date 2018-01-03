@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: UTF-8 -*-
 
 from cgi import FieldStorage
 from os import environ
@@ -6,8 +7,8 @@ from cStringIO import StringIO
 from urllib import quote, unquote
 from string import capwords, strip, split, join
 
-class AdvCgi(object):
-    """docstring for AdvCgi"""
+class AdvCGI(object):
+    """docstring for AdvCGI"""
     header = 'Content-Type: text/html\n\n'
     url = '/cgi-bin/adv_cgi.py'
     formhtml = '''<HTML><HEAD><TITLE>
@@ -26,7 +27,7 @@ class AdvCgi(object):
     <H3>Enter file to upload</H3>
     <INPUT TYPE=file NAME=upfile VALUE="%s" SIZE=45>
     <P><INPUT TYPE=submit>
-    </FORM></BODY></HTML>'''
+    </FORM></BODY></HTML>'''   
     langSet = ('Python', 'PERL', 'Java', 'C++', 'PHP','C', 'JavaScript')
     langItem = '<INPUT TYPE=checkbox NAME=lang VALUE="%s"%s> %s\n'
 
@@ -53,22 +54,21 @@ class AdvCgi(object):
     def showForm(self): # show fill-out form
         self.getCPPCookies()
         langStr = ''
+        print self.langs
         for eachLang in AdvCGI.langSet:
             if eachLang in self.langs:
-                langStr += AdvCGI.langItem % \
-                (eachLang, ' CHECKED', eachLang)
+                langStr += AdvCGI.langItem % (eachLang, ' CHECKED', eachLang)
             else:
-                langStr += AdvCGI.langItem % \
-                (eachLang, '', eachLang)
+                langStr += AdvCGI.langItem % (eachLang, '', eachLang)
 
-            if not self.cookies.has_key('user') or \
-                self.cookies['user'] == '':
-                cookStatus = '<I>(cookie has not been set yet)</I>'
-                userCook = ''
-            else:
-                userCook = cookStatus = self.cookies['user']
+        if not self.cookies.has_key('user') or \
+            self.cookies['user'] == '':
+            cookStatus = '<I>(cookie has not been set yet)</I>'
+            userCook = ''
+        else:
+            userCook = cookStatus = self.cookies['user']
 
-            print AdvCGI.header + AdvCGI.formhtml % (AdvCGI.url,cookStatus, userCook, self.who, langStr, self.fn)
+        print AdvCGI.header + AdvCGI.formhtml % (AdvCGI.url,cookStatus, userCook, self.who, langStr, self.fn)
 
     errhtml = '''<HTML><HEAD><TITLE>
     Advanced CGI Demo</TITLE></HEAD>
@@ -77,107 +77,103 @@ class AdvCgi(object):
     <FORM><INPUT TYPE=button VALUE=Back
     ONCLICK="window.history.back()"></FORM>
     </BODY></HTML>'''
-def showError(self):
-    print AdvCGI.header + AdvCGI.errhtml % (self.error)
+    def showError(self):
+        print AdvCGI.header + AdvCGI.errhtml % (self.error)
 
-reshtml = '''<HTML><HEAD><TITLE>
-Advanced CGI Demo</TITLE></HEAD>
-<BODY><H2>Your Uploaded Data</H2>
-<H3>Your cookie value is: <B>%s</B></H3>
-<H3>Your name is: <B>%s</B></H3>
-<H3>You can program in the following languages:</H3>
-<UL>%s</UL>
-<H3>Your uploaded file...<BR>
-Name: <I>%s</I><BR>
-Contents:</H3>
-<PRE>%s</PRE>
-Click <A HREF="%s"><B>here</B></A> to return to form.
-</BODY></HTML>'''
+    reshtml = '''<HTML><HEAD><TITLE>
+    Advanced CGI Demo</TITLE></HEAD>
+    <BODY><H2>Your Uploaded Data</H2>
+    <H3>Your cookie value is: <B>%s</B></H3>
+    <H3>Your name is: <B>%s</B></H3>
+    <H3>You can program in the following languages:</H3>
+    <UL>%s</UL>
+    <H3>Your uploaded file...<BR>
+    Name: <I>%s</I><BR>
+    Contents:</H3>
+    <PRE>%s</PRE>
+    Click <A HREF="%s"><B>here</B></A> to return to form.
+    </BODY></HTML>'''
+    def setCPPCookies(self):# tell client to store cookies
+        for eachCookie in self.cookies.keys():
+            print 'Set-Cookie: CPP%s=%s; path=/' % (eachCookie, quote(self.cookies[eachCookie]))
 
-def setCPPCookies(self):# tell client to store cookies
-    for eachCookie in self.cookies.keys():
-        print 'Set-Cookie: CPP%s=%s; path=/' % (eachCookie, quote(self.cookies[eachCookie]))
+    def doResults(self):
+        '''display results page''' 
+        MAXBYTES = 1024
+        langlist = ''
+        for eachLang in self.langs:
+            langlist = langlist + '<LI>%s<BR>' % eachLang
 
-def doResults(self):# display results page
-    MAXBYTES = 1024
-    langlist = ''
-    for eachLang in self.langs:
-        langlist = langlist + '<LI>%s<BR>' % eachLang
+        filedata = ''
+        while len(filedata) < MAXBYTES:# read file chunks 
+            data = self.fp.readline()
+            if data == '':
+                break
+            filedata += data
+        else: # truncate if too long
+            filedata += '... <B><I>(file truncated due to size)</I></B>'
+        
+        self.fp.close()
+        if filedata == '':
+            filedata = '<B><I>(file upload error or file not given)</I></B>'
+        filename = self.fn
 
-    filedata = ''
-    while len(filedata) < MAXBYTES:# read file chunks 
-120 data = self.fp.readline()
-121 if data == '': break
-122 filedata += data
-123 else: # truncate if too long
-124 filedata += \
-125 '... <B><I>(file truncated due to size)</I></B>'
-126 self.fp.close()
-127 if filedata == '':
-128 filedata = \
-129 <B><I>(file upload error or file not given)</I></B>'
-130 filename = self.fn
+        if not self.cookies.has_key('user') or self.cookies['user'] == '':
+            cookStatus = '<I>(cookie has not been set yet)</I>'
+            userCook = ''
+        else:
+            userCook = cookStatus = self.cookies['user']
 
-132 if not self.cookies.has_key('user') or \
-133 self.cookies['user'] == '':
-134 cookStatus = '<I>(cookie has not been set yet)</I>'
-135 userCook = ''
-136 else:
-137 userCook = cookStatus = self.cookies['user']
+        self.cookies['info'] = join([self.who, join(self.langs, ','), filename], ':')
+        self.setCPPCookies()
+        print AdvCGI.header + AdvCGI.reshtml % (cookStatus, self.who, langlist, filename, filedata, AdvCGI.url)
 
-139 self.cookies['info'] = join([self.who, \
-140 join(self.langs, ','), filename], ':')
-141 self.setCPPCookies()
-142 print AdvCGI.header + AdvCGI.reshtml % \
-143 (cookStatus, self.who, langlist,
-144 filename, filedata, AdvCGI.url)
+    def go(self): # determine which page to return
+        self.cookies = {}
+        self.error = ''
+        form = FieldStorage()
+        if form.keys() == []:
+            self.showForm()
+            return
 
-def go(self): # determine which page to return
-    self.cookies = {}
-    self.error = ''
-    form = FieldStorage()
-    if form.keys() == []:
-        self.showForm()
-        return
-
-    if form.has_key('person'):
-        self.who = capwords(strip(form['person'].value))
-        if self.who == '':
-            self.error = 'Your name is required. (blank)'
+        if form.has_key('person'):
+            self.who = capwords(strip(form['person'].value))
+            if self.who == '':
+                self.error = 'Your name is required. (blank)'
         else:
             self.error = 'Your name is required. (missing)'
 
-    if form.has_key('cookie'):
-        self.cookies['user'] = unquote(strip(form['cookie'].value))
-    else:
-        self.cookies['user'] = ''
-
-    self.langs = []
-    if form.has_key('lang'):
-        langdata = form['lang']
-        if type(langdata) == type([]):
-            for eachLang in langdata:
-                self.langs.append(eachLang.value)
+        if form.has_key('cookie'):
+            self.cookies['user'] = unquote(strip(form['cookie'].value))
         else:
-            self.langs.append(langdata.value)
-    else:
-        self.error = 'At least one language required.'
+            self.cookies['user'] = ''
 
-    if form.has_key('upfile'):
-        upfile = form["upfile"]
-        self.fn = upfile.filename or ''
-        if upfile.file:
-            self.fp = upfile.file
+        self.langs = []
+        if form.has_key('lang'):
+            langdata = form['lang']
+            if type(langdata) == type([]):
+                for eachLang in langdata:
+                    self.langs.append(eachLang.value)
+            else:
+                self.langs.append(langdata.value)
         else:
-        self.fp = StringIO('(no data)')
-    else:
-        self.fp = StringIO('(no file)')
-        self.fn = ''
+            self.error = 'At least one language required.'
 
-    if not self.error:
-        self.doResults()
-    else:
-        self.showError()
+        if form.has_key('upfile'):
+            upfile = form["upfile"]
+            self.fn = upfile.filename or ''
+            if upfile.file:
+                self.fp = upfile.file
+            else:
+                self.fp = StringIO('(no data)')
+        else:
+            self.fp = StringIO('(no file)')
+            self.fn = ''
+
+        if not self.error:
+            self.doResults()
+        else:
+            self.showError()
 
 if __name__ == '__main__':
     page = AdvCGI()
