@@ -1,13 +1,8 @@
 #!/usr/bin/env python  # start line
-# module doc
-# imported modules
+
 import sys,getopt
-# variable definitions
-# class definition
+
 # function definition
-# main program
-def main():
-    proc_cmd_args()
 
 def usage():
     print 'Usage: python argv.py [-s <xyz>] arg1[,arg2..]'
@@ -29,6 +24,10 @@ def proc_cmd_args():
             print 'ip is----',value
         if name in ("-p","--port"):
             print 'port is----',value
+
+# main program
+def main():
+    proc_cmd_args()
 
 if __name__ == '__main__':
     main()
