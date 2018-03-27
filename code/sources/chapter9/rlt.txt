@@ -1,0 +1,27 @@
+no temp directory available
+no temp directory available
+*** creating example directory...
+*** new working directory:
+D:\Works_YOKOGAWA\git_repository\test_github_repository\python_test\python_test\code\sources\chapter9\example
+*** original directory listing:
+[]
+*** creating test file...
+*** updated directory listing:
+['test']
+*** renaming 'test' to 'filetest.txt'
+*** updated directory listing:
+['filetest.txt']
+*** full file pathname
+D:\Works_YOKOGAWA\git_repository\test_github_repository\python_test\python_test\code\sources\chapter9\example\filetest.txt
+*** (pathname, basename) ==
+('D:\\Works_YOKOGAWA\\git_repository\\test_github_repository\\python_test\\python_test\\code\\sources\\chapter9\\example', 'filetest.txt')
+*** (filename, extension) ==
+('filetest', '.txt')
+*** displaying file contents:
+foo
+bar
+*** deleting test file
+*** updated directory listing:
+[]
+*** deleting test directory
+*** DONE

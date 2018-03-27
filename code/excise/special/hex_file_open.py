@@ -1,7 +1,7 @@
 import sys
 import os
 reload(sys)
-#sys.setdefaultencoding("utf-8") 
+sys.setdefaultencoding("utf-8") 
 
 import struct
 
@@ -24,4 +24,17 @@ fobj = open('test', 'w')
 fobj.write('foo\n')
 fobj.write('bar\n')
 fobj.close()
-#bin_file = open("32.bin", 'rb')
+
+matrix = [[0 for i in range(17)] for i in range(100)]
+bin_file = open("32.bin", 'rb')
+print bin_file.readline()
+#print matrix
+#bin_file.seek(24, 0)
+for i in range(0, 17):
+    for j in range(0, 99):
+        #bin_file.seek(24+i*16+j*2, 0)
+        matrix[j][i], = struct.unpack('c', bin_file.read(1))
+        #matrix[j][i] = bin_file.read(1)
+        #print matrix[j][i]
+
+print matrix        
